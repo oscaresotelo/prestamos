@@ -2,6 +2,7 @@
 import streamlit as st
 import sqlite3
 from st_pages import Page, show_pages, add_page_title
+
 # Conexión a la base de datos SQLite
 conn = sqlite3.connect('financiera.db')
 cursor = conn.cursor()
@@ -53,34 +54,20 @@ else:
 
     # Función para insertar datos en la tabla Clientes
     def insertar_cliente(tipo_cliente, dni, nombre, apellido, telefono, direccion, observacion):
-        cursor.execute('''
-            INSERT INTO Clientes (TipoCliente, Dni, Nombre, Apellido, Telefono, Direccion, Observacion)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (tipo_cliente, dni, nombre, apellido, telefono, direccion, observacion))
-        conn.commit()
+        # Verificar si el cliente ya existe con ese DNI
+        existing_client = cursor.execute('SELECT * FROM Clientes WHERE Dni = ?', (dni,)).fetchone()
+        if existing_client:
+            st.warning('¡Cliente con este DNI ya existe!')
+        else:
+            cursor.execute('''
+                INSERT INTO Clientes (TipoCliente, Dni, Nombre, Apellido, Telefono, Direccion, Observacion)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (tipo_cliente, dni, nombre, apellido, telefono, direccion, observacion))
+            conn.commit()
+            st.success('Cliente guardado exitosamente!')
 
     # Página principal de Streamlit
     def main():
-        # show_pages([
-        #         Page("Altaclientes.py", "Alta De Clientes"),
-        #         Page("AltaCreditos.py", "Alta De Creditos"),
-        #         Page("AltaTipoCliente.py", "Alta Tipo Cliente"),
-        #         Page("AltaTipoCredito.py", "Alta Tipo Credito"),
-        #         Page("ConsultaCredito.py", "Consulta de Creditos"),
-        #         Page("AltaUsuario.py", "Alta Modificacion Usuarios"),
-               
-        #         Page("prubalink.py", "Cobranza"),
-                
-        #     ])
-       
-        # Formulario para ingresar datos del tipo de cliente
-        # nombre_tipo_cliente = st.text_input('Nombre Tipo de Cliente')
-        # activo_tipo_cliente = st.text_input('Activo Tipo de Cliente')
-        # if st.button('Guardar Tipo de Cliente'):
-        #     insertar_tipo_cliente(nombre_tipo_cliente, activo_tipo_cliente)
-        #     st.success('Tipo de Cliente guardado exitosamente!')
-
-        # Formulario para ingresar datos del cliente
         st.title('Ingresar Clientes')
         tipo_clientes = cursor.execute('SELECT IdTipoCliente, Nombre FROM TipoClientes').fetchall()
         tipo_cliente_names = [tc[1] for tc in tipo_clientes]
@@ -90,14 +77,13 @@ else:
         nombre = st.text_input('Nombre')
         apellido = st.text_input('Apellido')
         direccion = st.text_input('Dirección')
-        telefono = st.number_input("Telefono",min_value= 0)
+        telefono = st.number_input("Telefono", min_value=0)
         observacion = st.text_area('Observación')
 
         # Botón para insertar datos en la base de datos
         if st.button('Grabar Cliente'):
             tipo_cliente_id = tipo_clientes[tipo_cliente_names.index(tipo_cliente)][0]
-            insertar_cliente(tipo_cliente_id, dni, nombre, apellido, telefono,direccion, observacion)
-            st.success('Cliente guardado exitosamente!')
+            insertar_cliente(tipo_cliente_id, dni, nombre, apellido, telefono, direccion, observacion)
 
     # Ejecutar la aplicación
     if __name__ == '__main__':

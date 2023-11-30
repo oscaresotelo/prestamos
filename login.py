@@ -55,7 +55,7 @@ def login(user):
         st.success("Bienvenido Administrador!")
         
         show_pages([
-            Page("Altaclientes.py", "Alta De Clientes"),
+            Page("AltaClientes.py", "Alta De Clientes"),
             Page("AltaCreditos.py", "Alta De Creditos"),
             Page("AltaTipoCliente.py", "Alta Tipo Cliente"),
             Page("AltaTipoCredito.py", "Alta Tipo Credito"),
@@ -63,13 +63,16 @@ def login(user):
             Page("AltaUsuario.py", "Alta Modificacion Usuarios"),
             Page("prubalink.py", "Cobranza"),
             Page("consfechas.py", "Consulta General"),
+            Page("registrodepagos.py", "Registrar Pagos"),
             Page("login.py", "Salir"),     
             ])
     elif user[4] == 2:
         st.success("Bienvenido Cobrador")
         
         show_pages([
-
+            Page("AltaClientes.py", "Alta De Clientes"),
+            Page("AltaCreditos.py", "Alta De Creditos"),
+            
             Page("prubalink.py", "Cobranza"),
             Page("login.py", "Salir"), 
         ])

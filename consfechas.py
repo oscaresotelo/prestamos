@@ -7,7 +7,7 @@ def local_css(file_name):
     with open(file_name) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 local_css("estilos.css")
-
+st.markdown(f"<h1 style='text-align: center; color: black;'> Consulta General</h1>", unsafe_allow_html=True)
 if "ingreso" not in st.session_state:
     st.session_state.ingreso = ""
 
@@ -58,11 +58,11 @@ else:
         st.dataframe(result_df)
 
         # Mostrar la cantidad de registros encontrados
-        st.write(f"Cantidad de registros encontrados: {len(result_df)}")
+        st.write(f"Cantidad de Creditos: {len(result_df)}")
 
         # Mostrar la suma del campo CuotaImporte
         total_cuota_importe = result_df['CuotaImporte'].sum()
-        st.write(f"Suma del campo CuotaImporte: {total_cuota_importe}")
+        st.write(f"Import Total de Cuotas: {total_cuota_importe}")
 
     with tab2:
 
@@ -109,11 +109,11 @@ else:
         st.dataframe(result_df)
 
         # Mostrar la cantidad de registros encontrados
-        st.write(f"Cantidad de registros encontrados: {len(result_df)}")
+        st.write(f"Cantidad de Creditos: {len(result_df)}")
 
         # Mostrar la suma del campo CuotaImporte
         total_cuota_importe = result_df['CuotaImporte'].sum()
-        st.write(f"Suma del campo CuotaImporte: {total_cuota_importe}")
+        st.write(f"Importe Total de Cuotas: {total_cuota_importe}")
     with tab3:
         conn = sqlite3.connect('financiera.db')
         cursor = conn.cursor()

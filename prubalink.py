@@ -142,7 +142,8 @@ if "ingreso" not in st.session_state:
 
 st.markdown(f"<h1 style='text-align: center; color: black;'> Usuario: {st.session_state.usuario}</h1>", unsafe_allow_html=True)
 
-
+if "usuario" not in st.session_state:
+    st.session_state.idusuario = ""
 if st.session_state.ingreso == "":
     st.warning("Por favor Ingrese Correctamente")
 else:
@@ -158,7 +159,7 @@ else:
     # Función para obtener la información de los créditos según la FechaVto
     def obtener_informacion_creditos_por_fecha(fecha_vto):
         cursor.execute("""
-            SELECT Cl.Nombre, Cl.Apellido, Cl.Dni, DC.NumeroCuota, DC.CuotaImporte, DC.PagoImporte, DC.IdDetalle, Cl.Telefono
+            SELECT Cl.Nombre, Cl.Apellido, Cl.Dni, Cl.Direccion, DC.NumeroCuota, DC.CuotaImporte, DC.PagoImporte, DC.IdDetalle, Cl.Telefono
             FROM DetalleCredito DC
             JOIN Credito C ON DC.IdCredito = C.IdCredito
             JOIN Clientes Cl ON C.Dni = Cl.Dni
@@ -169,6 +170,7 @@ else:
 
     # Función para actualizar el PagoImporte en la tabla DetalleCredito y actualizar la información en la tabla Creditos
     def actualizar_pago_importe(id_detalle, pago_importe):
+        fecha_actual = datetime.now().strftime('%Y-%m-%d')
         iddetalle = int(id_detalle)
         
         # Obtener la información necesaria de DetalleCredito para actualizar Creditos
@@ -185,9 +187,9 @@ else:
         # Actualizar el PagoImporte en DetalleCredito
         cursor.execute("""
             UPDATE DetalleCredito
-            SET PagoImporte = ?, IdCobrador = ?
+            SET PagoImporte = ?, IdCobrador = ? , FechaPago = ?
             WHERE IdDetalle = ?
-            """, (pago_importe, NumeroCobrador, iddetalle))
+            """, (pago_importe, NumeroCobrador,fecha_actual,iddetalle))
         
         # Actualizar la información en la tabla Creditos
         cursor.execute("""
@@ -239,7 +241,7 @@ else:
 
         # Mostrar la información en un DataFrame
         if info_creditos:
-            df = pd.DataFrame(info_creditos, columns=['Clientes.Nombre', 'Clientes.Apellido', 'Clientes.dni', 'NumeroCuota', 'CuotaImporte', 'PagoImporte', 'IdDetalle', 'Clientes.Telefono'])
+            df = pd.DataFrame(info_creditos, columns=['Clientes.Nombre', 'Clientes.Apellido', 'Clientes.dni', 'Clientes.Direccion','NumeroCuota', 'CuotaImporte', 'PagoImporte', 'IdDetalle', 'Clientes.Telefono'])
             st.write(df)
 
             # Formulario para ingresar el importe de pago y seleccionar el registro
